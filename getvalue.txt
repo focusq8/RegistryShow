@@ -1,0 +1,41 @@
+using Microsoft.Win32;
+
+namespace ConsoleApp12
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            RegistryKey[] reg32Keys = new[]
+{
+    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true),
+    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\RunOnce", true),
+    RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true),
+    RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\RunOnce", true),
+};
+
+
+            RegistryKey[] reg64Keys = new[]
+            {
+    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true),
+    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\RunOnce", true)
+};
+            GetValuesFromKeys(reg32Keys);
+            GetValuesFromKeys(reg64Keys);
+            Console.ReadLine();
+        }
+        static void GetValuesFromKeys(RegistryKey[] keys)
+        {
+            foreach (var key in keys)
+            {
+                string[] valueNames = key.GetValueNames();
+                foreach (var name in valueNames)
+                {
+                    var value = key.GetValue(name);
+                    Console.WriteLine(value);
+                }
+            }
+        }
+    }
+}

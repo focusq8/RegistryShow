@@ -1,0 +1,47 @@
+using Microsoft.Win32;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        private void killer()
+        {
+            Process.GetProcesses()
+                .Where(x => x.ProcessName.ToLower()
+                .Contains("regedit"))
+                .ToList()
+                .ForEach(x => x.Kill());
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            killer();
+            RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Applets\Regedit", true);
+            myKey.SetValue("LastKey", @"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run", RegistryValueKind.String);
+            myKey.Close();
+            Process.Start("regedit.exe");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            killer();
+            RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Applets\Regedit", true);
+            if (myKey != null)
+            {
+                myKey.SetValue("LastKey", @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", RegistryValueKind.String);
+                myKey.Close();
+
+            }
+                
+            Process.Start("regedit.exe");
+        }
+    }
+}
